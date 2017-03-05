@@ -23,6 +23,8 @@
 
   VERSION HISTORY:
   2017-03-01 0.0 allenh - In the beginning...
+  2017-03-04 0.1 allenh - Renaming volume(), adding setVolumeMax(), fixing
+                 chip name typos.
 
   TODO:
    Add ADSR support.
@@ -31,9 +33,9 @@
    TODO...
 */
 /*---------------------------------------------------------------------------*/
-#define VERSION "0.0"
+#define VERSION "0.1"
 
-#include "SN76849.h"
+#include "SN76489.h"
 
 /*---------------------------------------------------------------------------*/
 // CONFIGURATION
@@ -305,7 +307,7 @@ void play(byte channel, uint16_t note)
     {
       if (note == 0)
       {
-        volume( channel, VOL_OFF );
+        setVolume( channel, VOL_OFF );
         // poke( LATCH_CMD | CHANNEL0 | TYPE_VOL | VOL_OFF );
       }
       else
@@ -329,7 +331,7 @@ void play(byte channel, uint16_t note)
         }
 
         /* Set channel to default volume. */
-        volume(channel, S_volume);
+        setVolume(channel, S_volume);
         
         /* Cache the volume level so we can use it later. */
         S_vol[channel] = S_volume;
@@ -361,7 +363,7 @@ void play(byte channel, uint16_t note)
  * channel  = 0-3
  * volume   = VOL_OFF - VOL_MAX
  */
-void volume( byte channel, byte volume )
+void setVolume( byte channel, byte volume )
 {
   /* Convert channel 0-3 to bits. */
   if (channel <= 3)
@@ -383,14 +385,30 @@ void volume( byte channel, byte volume )
 #endif
 }
 
+/*
+ * Set maximum volume level for all channels.
+ */
+void setMaxVolume( byte volume )
+{
+  // Update our global static variable.
+  S_volume = (volume & 0b1111);
 
-/* Issue Volume 0 to all four channels. */
+#if defined(DEBUG)
+    // Channel >3! Error.
+    Serial.print(F("setMaxVolume: "));
+    Serial.println(volume);
+#endif
+}
+
+/*
+ * Issue Volume 0 to all four channels.
+ */
 void muteAll()
 {
-  volume(0, VOL_OFF);
-  volume(1, VOL_OFF);
-  volume(2, VOL_OFF);
-  volume(3, VOL_OFF);
+  setVolume(0, VOL_OFF);
+  setVolume(1, VOL_OFF);
+  setVolume(2, VOL_OFF);
+  setVolume(3, VOL_OFF);
 }
 
 // ADSR stuff will go here, eventually. But for now, just decay...
@@ -418,7 +436,7 @@ void decayHandler()
     {
       /* Decrement volume. */
       S_vol[i] = S_vol[i] + VOL_DEC;
-      volume(i, S_vol[i]);
+      setVolume(i, S_vol[i]);
     }
   }
 }

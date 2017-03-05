@@ -16,15 +16,19 @@
   
   VERSION HISTORY:
   2017-03-01 0.0 allenh - In the beginning...
+  2017-03-03 0.1 allenh - Fixing chip name typos.
 
   TODO:
+  * Move music data to PROGMEM.
+  * Make "interactive tone demo" do channel,note,volume.
   
   TOFIX:
   
 */
 /*---------------------------------------------------------------------------*/
+#define VERSION "0.1"
 
-#include "SN76849.h"        // for NOTES, etc.
+#include "SN76489.h"        // for NOTES, etc.
 
 #include "MusicSequencer.h" // for MusicStruct, sequencer*()
 
@@ -113,6 +117,8 @@ void setup()
 
   initSN76489();
 
+  setMaxVolume( 0 ); // 0=high, 15=silent
+
   muteAll(); // Just in case...
 
   Serial.println(F("SN76489 Test Program"));
@@ -139,9 +145,12 @@ void loop()
     byte  note;
     byte  volume;
 
-    Serial.print(F("channel (0-3), note (1-88), volume (0-15) :"));
+    //Serial.print(F("channel (0-3), note (1-88), volume (0-15) :"));
+    Serial.print(F("note (0-87) :"));
 
     lineinput(buffer, sizeof(buffer));
+    channel = 0;
+    volume = 0; // LOUD
 
     Serial.print(F("play("));
     Serial.print(channel);
