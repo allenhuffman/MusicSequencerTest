@@ -128,6 +128,7 @@ static uint8_t  S_vol[4] = { VOL_OFF, VOL_OFF, VOL_OFF, VOL_OFF };
     A B C D E F G A B C D E F G A B C D E F G        G A B C D E F G A B C 
     0 0 1 1 1 1 1 1 1 2 2 2 2 2 2 2 3 3 3 3 3        6 6 6 7 7 7 7 7 7 7 8 
 */
+
 static const uint16_t PROGMEM G_notes[88] = {
   4545,  // 0x11C1 - A0  - Lowest piano key.
   4290,  // 0x10C2 - A0#
