@@ -16,6 +16,7 @@
 
   VERSION HISTORY:
   2017-03-01 0.0 allenh - In the beginning...
+  2017-03-06 0.1 allenh - Using renamed playHandler() function. Comments.
 
   TODO:
    ...
@@ -23,7 +24,7 @@
   TOFIX:
    ...
   -----------------------------------------------------------------------------*/
-#define VERSION "0.0"
+#define VERSION "0.1"
 
 #include "MusicSequencer.h"
 
@@ -89,7 +90,7 @@ bool  sequencerStart( MusicStruct *sequence[], byte tracks, byte tempo)
   }
 
   return status;
-}
+} // end of sequencerStart()
 
 /*---------------------------------------------------------------------------*/
 
@@ -105,10 +106,6 @@ bool sequencerHandler()
 
   static unsigned long  s_playNextTime[MAX_TRACKS];
   static unsigned int   s_currentNote[MAX_TRACKS];
-
-  static unsigned long  s_decayTime = 0;
-  static unsigned int   s_decayRate = 2;
-
   static int            s_tracksPlaying = 0;
   
   if (S_started == false)
@@ -142,8 +139,8 @@ bool sequencerHandler()
       note = S_sequence[i][currentNote].note;
       duration = S_sequence[i][currentNote].duration;
 
-      // If we read 0 for both, that track is done.
-      if ( (note == 0) && (duration == 0) )
+      // If we read END for both, that track is done.
+      if ( (note == END) && (duration == END) )
       {
 #if defined(DEBUG)
         Serial.print(F("Track "));
@@ -186,12 +183,12 @@ bool sequencerHandler()
   }
 #endif
 
-  // Handle decay.
-  decayHandler();
+  // Handle note play stuff (ADSR, volume decay, etc.).
+  playHandler();
 
   // true means tracks are playing, false means they are not.
   return (s_tracksPlaying==0 ? false : true);
-}
+} // end of sequencerHandler()
 
 /*---------------------------------------------------------------------------*/
 // End of MusicSequencer

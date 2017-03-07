@@ -17,6 +17,7 @@
   VERSION HISTORY:
   2017-03-01 0.0 allenh - In the beginning...
   2017-03-03 0.1 allenh - Fixing chip name typos.
+  2017-03-06 0.2 allenh - Using END define. Comments.
 
   TODO:
   * Move music data to PROGMEM.
@@ -26,7 +27,7 @@
   
 */
 /*---------------------------------------------------------------------------*/
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 #include "SN76489.h"        // for NOTES, etc.
 
@@ -39,7 +40,7 @@
    3 - Track 4 Noise (percussion)
 */
 
-#define TRACKS 2
+#define TRACKS 2  // Tracks in this sequence.
 
 // TODO: MAKE THIS PROGMEM!!!
 const MusicStruct g_track0[] = // Bass
@@ -64,7 +65,7 @@ const MusicStruct g_track0[] = // Bass
   { NA3S, L8 },
   { NB3, L8 },
 
-  { 0, 0 } // END
+  { END, END } // END
 };
 
 const MusicStruct g_track1[] =
@@ -106,7 +107,7 @@ const MusicStruct g_track1[] =
   { NA4S, L16 },
   { NB4, L8 },
 
-  { 0, 0 }
+  { END, END }
 };
 
 const MusicStruct *g_pacManIntro[TRACKS] = { g_track0, g_track1 };
@@ -122,7 +123,7 @@ void setup()
   muteAll(); // Just in case...
 
   Serial.println(F("SN76489 Test Program"));
-}
+} // end of setup()
 
 void loop()
 {
@@ -161,13 +162,13 @@ void loop()
     Serial.println(F(")"));
 
     play(0, atoi(buffer));
-    //delay(100);
+    // delay(100);
     // play(0, 0);
   }
 
   Serial.println("Off...");
   muteAll();
-}
+} // end of loop()
 
 /*---------------------------------------------------------------------------*/
 // End of MusicSequencerTest

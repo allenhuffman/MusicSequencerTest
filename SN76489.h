@@ -10,7 +10,8 @@
 
   VERSION HISTORY:
   2017-03-01 0.0 allenh - In the beginning...
-  2017-03-04 0.1 allenh - Renaming volume(), adding setVolumeMax()
+  2017-03-04 0.1 allenh - Renaming volume(), adding setVolumeMax().
+  2017-03-06 0.2 allenh - Renaming to playHandler().
 
   TODO:
   1. Note 0 is used for off, but since we can't play anything that low
@@ -32,7 +33,9 @@ void play(byte channel, uint16_t note);
 void setVolume( byte channel, byte volume );
 void setMaxVolume( byte volume );
 
-void decayHandler();
+// TODO: Channel 3 "noise" is not really supported yet.
+
+void playHandlder();
 
 // Convienience functions.
 void muteAll();

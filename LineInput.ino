@@ -14,6 +14,7 @@
 
   VERSION HISTORY:
   2017-03-01 0.0 allenh - In the beginning...
+  2017-03-06 0.1 allenh - Comments.
 
   TODO:
 
@@ -55,7 +56,9 @@ byte lineinput(char *cmdLine, byte len)
   while(!done)
   {
     //ledBlink();
-    decayHandler();
+ 
+    // Call handler so notes can fade, etc. in the "background".
+    playHandler();
 
     ch = -1; // -1 is no data available
 
@@ -113,7 +116,7 @@ byte lineinput(char *cmdLine, byte len)
   } // end of while(!done)
 
   return cmdLen;
-}
+} // end of lineinput()
 
 /*---------------------------------------------------------------------------*/
 // End of LineInput

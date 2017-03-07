@@ -10,6 +10,7 @@
 
   VERSION HISTORY:
   2017-03-01 0.0 allenh - In the beginning...
+  2017-03-06 0.1 allenh - Adding END and REST defines. Fixing lowest note.
 
   TODO:
 
@@ -77,6 +78,9 @@ enum flats {
   NC8 // 1
 };
 #endif
+
+#define REST      0         // 0 is a special case for no note
+#define END       255       // end of note table flag
 
 // Durations
 #define L128      1         // 128th note
