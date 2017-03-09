@@ -27,6 +27,7 @@
                           chip name typos.
   2017-03-06 0.2 allenh - Adding comments with MIDI not values. Fixing
                           lowest note. Cleanup.
+  2017-03-09 0.3 allenh - Fixing defines and comments for noise bits.
 
   TODO:
    Add ADSR support (instead of just fade/decay) to playHandler().
@@ -89,25 +90,31 @@
 /*---------------------------------------------------------------------------*/
 // 1CCTDDDD - 1=Latch+Data, CC=Channel, T=Type, DDDD=Data1
 #define LATCH_CMD     0b10000000
-#define CHANNEL0      0b00000000
-#define CHANNEL1      0b00100000
-#define CHANNEL2      0b01000000
-#define CHANNEL3      0b01100000
+
+#define CHANNEL0      0b00000000  // Tone 1
+#define CHANNEL1      0b00100000  // Tone 2
+#define CHANNEL2      0b01000000  // Tone 3
+#define CHANNEL3      0b01100000  // White Noise
+
 #define TYPE_VOL      0b00010000
-#define VOL_OFF       0b00001111  // 15
-#define VOL_LOW       0b00001010  // 10
-#define VOL_MED       0b00000101  // 5
-#define VOL_MAX       0b00000000  // 0
-#define VOL_DEC       +1          // +1 decrements volume on this chip
-#define VOL_INC       -1          // -1 increments volume on this chip
+  #define VOL_OFF     0b00001111  // 15
+  #define VOL_LOW     0b00001010  // 10
+  #define VOL_MED     0b00000101  // 5
+  #define VOL_MAX     0b00000000  // 0
+
 #define TYPE_TONE     0b00000000
-#define DATA1         0b00001111  // LSB of data [DATA2|DATA1]
-#define NOISE_MODE    0b0000100   // 0=white, 1=periodic
-#define NOISE_RATE    0b0000011   //
+  #define NOISE_MODE  0b00000100  // 0=periodic, 1=white
+  #define NOISE_RATE  0b00000011  // Shift rate
+
+#define DATA1MASK     0b00001111  // 4-bits LSB of data [DATA2|DATA1]
 
 // 0XDDDDDD - 0=Data, X=Ignored, DDDDDD = Data2
 #define DATA_CMD      0b00000000
-#define DATA2         0b00111111  // MSB of data (if needed)
+
+#define DATA2MASK     0b00111111  // 6-bits MSB of data (if needed)
+
+#define VOL_DEC       +1          // +1 decrements volume on this chip
+#define VOL_INC       -1          // -1 increments volume on this chip
 
 #define DECAYTIME_MS `50  // ms each volume decrememnt
 
