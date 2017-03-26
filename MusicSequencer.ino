@@ -24,7 +24,7 @@
   TOFIX:
    ...
   -----------------------------------------------------------------------------*/
-#define VERSION "0.1"
+//#define VERSION "0.1"
 
 #include "MusicSequencer.h"
 
@@ -100,12 +100,12 @@ bool  sequencerStart( MusicStruct *sequence[], byte tracks, byte tempo)
  */
 bool sequencerHandler()
 {
-  bool    status = false;
+  //bool    status = false;
   int     i;
   uint8_t note, duration;
 
   static unsigned long  s_playNextTime[MAX_TRACKS];
-  static unsigned int   s_currentNote[MAX_TRACKS];
+  static int   s_currentNote[MAX_TRACKS];
   static int            s_tracksPlaying = 0;
   
   if (S_started == false)

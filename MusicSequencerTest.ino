@@ -43,7 +43,7 @@
 #define TRACKS 2  // Tracks in this sequence.
 
 // TODO: MAKE THIS PROGMEM!!!
-const MusicStruct g_track0[] = // Bass
+MusicStruct g_track0[] = // Bass
 {
   { NB2, L8DOTTED },
   { NB3, L16 },
@@ -68,7 +68,7 @@ const MusicStruct g_track0[] = // Bass
   { END, END } // END
 };
 
-const MusicStruct g_track1[] =
+MusicStruct g_track1[] =
 {
   { NB3, L16 },
   { NB4, L16 },
@@ -110,19 +110,51 @@ const MusicStruct g_track1[] =
   { END, END }
 };
 
-const MusicStruct *g_pacManIntro[TRACKS] = { g_track0, g_track1 };
+MusicStruct *g_pacManIntro[TRACKS] = { g_track0, g_track1 };
+
+#define TX_PIN          7
+#define RX_PIN          8
+#define LED_PIN         11
 
 void setup()
 {
   Serial.begin(9600);
+  Serial.println(F("SN76489 Test Program "VERSION));
 
   initSN76489();
+
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
+
+  // Notes about using an Arduino pin to generate the 4Mhz pulse:
+
+  // For the Teensy 2.0, this is how to make a pin act as a 4MHz pulse.
+  // I am using this on my Teensy 2.0 hardware for testing. This can be
+  // done on other Arduino models, too, but I have only been using my
+  // Teensy for this so far. My original NANO prototype is using an
+  // external crystal.
+
+  //pinMode(14, OUTPUT); 
+  // Turn on toggle pin mode.
+  //TCCR1A |= ((1<<COM1A1));
+  // Set CTC mode (mode 4), and set clock to be CPU clock
+  //TCCR1B |= ((1<<WGM12) | (1<<CS10));
+  // Count to one and then reset and count again.  Since CPU is 16MHz,
+  // this will divide clock by 2 and action on the pin.  Since we will be
+  // toggling the pin, that will divide by 2 again, giving /4 or 4MHz
+  //OCR1A = 1;
+
+  // Make pin 14 be a 14Mhz signal on the Teensy 2.0:
+#ifdef TEENSY20
+  pinMode(14,OUTPUT);
+  TCCR1A = 0x43;
+  TCCR1B = 0x19;
+  OCR1A = 1;
+#endif
 
   setMaxVolume( 0 ); // 0=high, 15=silent
 
   muteAll(); // Just in case...
-
-  Serial.println(F("SN76489 Test Program"));
 } // end of setup()
 
 void loop()
@@ -150,6 +182,7 @@ void loop()
     Serial.print(F("note (0-87) :"));
 
     lineinput(buffer, sizeof(buffer));
+    note = atoi(buffer);
     channel = 0;
     volume = 0; // LOUD
 

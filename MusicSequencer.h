@@ -33,9 +33,9 @@ typedef struct {
 /*---------------------------------------------------------------------------*/
 
 // These are set to the lowest and highest note the chip can play.
-#define LOWEST_NOTE   NB2
+//#define LOWEST_NOTE   NB2
 
-#define HIGHEST_NOTE  NC8 // It is really NC9, beyond piano.
+//#define HIGHEST_NOTE  NC8 // It is really NC9, beyond piano.
 
 #define MAX_TRACKS    4   // Max tracks we can handle.
 

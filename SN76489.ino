@@ -28,16 +28,18 @@
   2017-03-06 0.2 allenh - Adding comments with MIDI not values. Fixing
                           lowest note. Cleanup.
   2017-03-09 0.3 allenh - Fixing defines and comments for noise bits.
+  2017-03-14 0.4 allenh - Fixing pinout notes. More cleanup.
+  2017-03-26 0.5 allenh - NANO and Teensy 2.0 defines. Cleanup.
 
   TODO:
    Add ADSR support (instead of just fade/decay) to playHandler().
    Add real support for Channel 3 "noise".
 
   TOFIX:
-   TODO...
+   TODO
 */
 /*---------------------------------------------------------------------------*/
-#define VERSION "0.2"
+#define VERSION "0.5"
 
 #include "SN76489.h"
 
@@ -48,6 +50,9 @@
 // The SN76489 uses 8 digital output lines to set the bits in a byte, then
 // uses another digital out to toggle HIGH/LOW to set that byte.
 //
+#define NANO
+
+#if defined(NANO)
 
 /*      Chip Pin        Arduino Pin */
 #define SN76489_D0      2   //D2
@@ -60,9 +65,36 @@
 #define SN76489_D7      10  //D10
 
 #define SN76489_WE      5   //D5
-
 #define SN76489_CE          // Chip Enable - Not used here.
 #define SN76489_READY       // Not used here.
+
+#define LED_PIN         13
+
+#elif defined(TEENSY20)
+
+// Teensy 2.0
+/*      Chip Pin        Teensy Pin */
+#define SN76489_D0      0
+#define SN76489_D1      1
+#define SN76489_D2      2
+#define SN76489_D3      3
+#define SN76489_D4      4
+#define SN76489_D5      5
+#define SN76489_D6      6
+// 7 is RX
+// 8 is TX
+#define SN76489_D7      9
+
+#define SN76489_WE      10
+#define SN76489_CE          // Chip Enable - Not used here.
+#define SN76489_READY       // Not used here.
+
+#define LED_PIN         11
+
+#else
+#error *** Pins must be defined in SN76489.ino ***
+#endif
+
 
 /*
    D5  ->  1 +-----+ 16 <- VCC
@@ -72,7 +104,7 @@
    !WE ->  5 |  4  | 12 <- D2
    !CE ->  6 |  8  | 11 <- D1
    AUD ->  7 |  9  | 10 <- D0
-   GND -?  8 +-----+ 9  <- NC
+   GND ->  8 +-----+ 9  <- NC
 
   D0-D7 goes to Arduino digital outputs.
   WE    goes to Arduino digital output.
@@ -80,9 +112,14 @@
   GND   goes to ground.
   AUD   goes to a headphone jack (other side to GND?).
   CLK   goes to a 4MHz crystal (which is hooked to 5V and GND).
-  CE    goes to 5V (always enabled; but it could be tied to a pin for using
+  CE    goes to GND (always enabled; but it could be tied to a pin for using
         more than one device on those lines).
-  RDY   is not used.
+  RDY   is not used in this code, yet.
+
+  NOTE: The Arduino chips have a timer that is capable of generating the
+  4MHz pulse on one of the pins, removing the need for a dedicated crystal.
+  I have done this on a Teensy 2.0 so those settings can be found in my
+  MusicSequenceTest.ino sketch. 
 */
 
 /*---------------------------------------------------------------------------*/
@@ -116,7 +153,7 @@
 #define VOL_DEC       +1          // +1 decrements volume on this chip
 #define VOL_INC       -1          // -1 increments volume on this chip
 
-#define DECAYTIME_MS `50  // ms each volume decrememnt
+#define DECAYRATE_MS  10  // ms each volume decrememnt
 
 // These defines make us ignore values sent too low or too high.
 #define LOWEST_NOTE   20  // B2
@@ -239,7 +276,10 @@ static const uint16_t PROGMEM G_notes[88] = {
   32,    // 0x20    86  B7    107
 
   30,    // 0x1E    87  C8    108   Highest piano key.
-/*28,    // 0x1C    88  C8#   109 
+/*
+ * These are higher notes that are not on a piano.
+ * 
+  28,    // 0x1C    88  C8#   109 
   27,    // 0x1B    89  D8    110
   25,    // 0x19    90  D8#   111
   24,    // 0x18    91  E8    112
@@ -258,7 +298,8 @@ static const uint16_t PROGMEM G_notes[88] = {
   12,    // 0xC     103 F8    124
   11,    // 0xB     104 F8#   125
   11,    // 0xB     105 G8    126
-  10,    // 0xA     106 G8#   127   HIGHEST MIDI NOTE*/
+  10,    // 0xA     106 G8#   127   HIGHEST MIDI NOTE
+*/
 };
 
 /*---------------------------------------------------------------------------*/
@@ -285,6 +326,7 @@ void initSN76489()
   pinMode(SN76489_D5, OUTPUT);
   pinMode(SN76489_D6, OUTPUT);
   pinMode(SN76489_D7, OUTPUT);
+
   pinMode(SN76489_WE, OUTPUT);
 
   muteAll();
@@ -425,7 +467,7 @@ void muteAll()
 void playHandler()
 {
   static unsigned long s_decayTime = 0;
-  static unsigned int  s_decayRate = 30;
+  static unsigned int  s_decayRate = DECAYRATE_MS;
 
   // After s_decayTime, we decrement volume (fade).
   if ( (long)(millis() - s_decayRate) >= s_decayTime )
@@ -471,10 +513,13 @@ static void poke(byte b)
   digitalWrite(SN76489_D6, (b & bit(6)) ? HIGH : LOW);
   digitalWrite(SN76489_D7, (b & bit(7)) ? HIGH : LOW);
 
+digitalWrite(LED_PIN, HIGH);
   /* Toggle !WE LOW then HI to send the byte. */
   digitalWrite(SN76489_WE, LOW);
 
   delay(1);
+
+  digitalWrite(LED_PIN, LOW);
 
   digitalWrite(SN76489_WE, HIGH);
 } // end of poke()
