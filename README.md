@@ -14,7 +14,8 @@ It was built with the current 1.8.1 version of the Arduino IDE. I'll be adding a
 REVISION
 ========
 * 2017-03-03 allenh - Initial, hastily created README file.
-* 2017-03-05 achuff - Added notes about what the three main compoents are and what they do.
+* 2017-03-05 allenh - Added notes about what the three main compoents are and what they do.
+* 2018-02-18 allenh - Updates for Arduino Nano (4MHz timing on pin 3).
 
 FILES
 =====
