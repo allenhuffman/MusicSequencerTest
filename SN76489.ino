@@ -133,8 +133,8 @@
 
   NOTE: The Arduino chips have a timer that is capable of generating the
   4MHz pulse on one of the pins, removing the need for a dedicated crystal.
-  I have done this on a Teensy 2.0 so those settings can be found in my
-  MusicSequenceTest.ino sketch. 
+  I have done this on a Teensy 2.0 and Arduino Nano. Those settings can be
+  found in my MusicSequenceTest.ino sketch. 
 */
 
 /*---------------------------------------------------------------------------*/
