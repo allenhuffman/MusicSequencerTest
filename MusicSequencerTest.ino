@@ -144,12 +144,21 @@ void setup()
   // toggling the pin, that will divide by 2 again, giving /4 or 4MHz
   //OCR1A = 1;
 
-  // Make pin 14 be a 14Mhz signal on the Teensy 2.0:
-#ifdef TEENSY20
-  pinMode(14,OUTPUT);
-  TCCR1A = 0x43;
-  TCCR1B = 0x19;
+#if defined(TEENSY20)
+  // Make pin 14 be a 4MHz signal.
+  pinMode(14, OUTPUT);
+  TCCR1A = 0x43;  // 01000011 
+  TCCR1B = 0x19;  // 00011001
   OCR1A = 1;
+#elif defined(ARDUINO_AVR_NANO)
+  // Make pin 3 be a 4MHz signal.
+  pinMode(3, OUTPUT);
+  TCCR2A = 0x23;  // 00100011
+  TCCR2B = 0x09;  // 00001001
+  OCR2A = 3;
+  OCR2B = 1;  
+#else
+#error 4MHz stuff not defined.
 #endif
 
   setMaxVolume( 0 ); // 0=high, 15=silent

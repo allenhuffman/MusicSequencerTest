@@ -30,6 +30,8 @@
   2017-03-09 0.3 allenh - Fixing defines and comments for noise bits.
   2017-03-14 0.4 allenh - Fixing pinout notes. More cleanup.
   2017-03-26 0.5 allenh - NANO and Teensy 2.0 defines. Cleanup.
+  2018-02-18 0.6 allenh - Using boards.txt defines for Teensy/Nano support.
+                          NANO pin defines redone for ease of wiring.
 
   TODO:
    Add ADSR support (instead of just fade/decay) to playHandler().
@@ -39,7 +41,7 @@
    TODO
 */
 /*---------------------------------------------------------------------------*/
-#define VERSION "0.5"
+#define VERSION "0.6"
 
 #include "SN76489.h"
 
@@ -50,13 +52,13 @@
 // The SN76489 uses 8 digital output lines to set the bits in a byte, then
 // uses another digital out to toggle HIGH/LOW to set that byte.
 //
-#define NANO
 
-#if defined(NANO)
-
+#if defined(ARDUINO_AVR_NANO)
+// Arduino Nano - pin 3 for 4Mhz
 /*      Chip Pin        Arduino Pin */
+/* StrongWare:
 #define SN76489_D0      2   //D2
-#define SN76489_D1      3   //D3
+#define SN76489_D1      9   //D3
 #define SN76489_D2      4   //D4
 #define SN76489_D3      6   //D6
 #define SN76489_D4      7   //D7
@@ -67,12 +69,25 @@
 #define SN76489_WE      5   //D5
 #define SN76489_CE          // Chip Enable - Not used here.
 #define SN76489_READY       // Not used here.
+*/
+#define SN76489_D0      4
+#define SN76489_D1      5
+#define SN76489_D2      6
+#define SN76489_D3      7
+#define SN76489_D4      8
+#define SN76489_D5      9
+#define SN76489_D6      10
+#define SN76489_D7      11
+
+#define SN76489_WE      2
+#define SN76489_CE          // Chip Enable - Not used here.
+#define SN76489_READY       // Not used here.
 
 #define LED_PIN         13
 
 #elif defined(TEENSY20)
 
-// Teensy 2.0
+// Teensy 2.0 - pin 14 for 4Mhz
 /*      Chip Pin        Teensy Pin */
 #define SN76489_D0      0
 #define SN76489_D1      1
@@ -513,7 +528,7 @@ static void poke(byte b)
   digitalWrite(SN76489_D6, (b & bit(6)) ? HIGH : LOW);
   digitalWrite(SN76489_D7, (b & bit(7)) ? HIGH : LOW);
 
-digitalWrite(LED_PIN, HIGH);
+  digitalWrite(LED_PIN, HIGH);
   /* Toggle !WE LOW then HI to send the byte. */
   digitalWrite(SN76489_WE, LOW);
 
