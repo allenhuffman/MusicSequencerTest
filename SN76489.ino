@@ -32,6 +32,7 @@
   2017-03-26 0.5 allenh - NANO and Teensy 2.0 defines. Cleanup.
   2018-02-18 0.6 allenh - Using boards.txt defines for Teensy/Nano support.
                           NANO pin defines redone for ease of wiring.
+  2025-10-10 0.7 allenh - Removing compiler warnings.
 
   TODO:
    Add ADSR support (instead of just fade/decay) to playHandler().
@@ -41,7 +42,7 @@
    TODO
 */
 /*---------------------------------------------------------------------------*/
-#define VERSION "0.6"
+//#define VERSION "0.7"
 
 #include "SN76489.h"
 
@@ -83,7 +84,9 @@
 #define SN76489_CE          // Chip Enable - Not used here.
 #define SN76489_READY       // Not used here.
 
+#if !defined(LED_PIN) // In case defined in code that uses this.
 #define LED_PIN         13
+#endif
 
 #elif defined(TEENSY20)
 
@@ -104,7 +107,9 @@
 #define SN76489_CE          // Chip Enable - Not used here.
 #define SN76489_READY       // Not used here.
 
+#if !defined(LED_PIN) // In case defined in code that uses this.
 #define LED_PIN         11
+#endif
 
 #else
 #error *** Pins must be defined in SN76489.ino ***
@@ -485,7 +490,7 @@ void playHandler()
   static unsigned int  s_decayRate = DECAYRATE_MS;
 
   // After s_decayTime, we decrement volume (fade).
-  if ( (long)(millis() - s_decayRate) >= s_decayTime )
+  if ( (long)(millis() - s_decayRate) >= (long)s_decayTime )
   {
     // Reset "next time to toggle" time.
     s_decayTime = millis() + s_decayRate;

@@ -18,6 +18,7 @@
   2017-03-01 0.0 allenh - In the beginning...
   2017-03-03 0.1 allenh - Fixing chip name typos.
   2017-03-06 0.2 allenh - Using END define. Comments.
+  2025-10-10 0.3 allenh - Fixing some compiler warnings.
 
   TODO:
   * Move music data to PROGMEM.
@@ -27,7 +28,7 @@
   
 */
 /*---------------------------------------------------------------------------*/
-#define VERSION "0.2"
+#define VERSION "0.3"
 
 #include "SN76489.h"        // for NOTES, etc.
 
@@ -119,7 +120,7 @@ MusicStruct *g_pacManIntro[TRACKS] = { g_track0, g_track1 };
 void setup()
 {
   Serial.begin(9600);
-  Serial.println(F("SN76489 Test Program "VERSION));
+  Serial.println(F("SN76489 Test Program " VERSION));
 
   initSN76489();
 
